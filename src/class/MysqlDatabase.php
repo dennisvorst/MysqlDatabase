@@ -29,8 +29,8 @@ class MysqlDatabase{
 		/* localhost */
 		if (!defined('NMSERVER')) define('NMSERVER', 'localhost');
 		if (!defined('NMUSER')) define('NMUSER', 'root');
-		if (!defined('NMPASSWORD')) define('NMPASSWORD', 'Marjilde');
-		if (!defined('NMDATABASE')) define('NMDATABASE', 'museum');
+		if (!defined('NMPASSWORD')) define('NMPASSWORD', 'somePassword');
+		if (!defined('NMDATABASE')) define('NMDATABASE', 'someDatabase');
 
 		/* get username and password */
 		if (file_exists($this->_config))

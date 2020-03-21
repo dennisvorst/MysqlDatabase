@@ -6,3 +6,5 @@ dump.bat
 src/class/MysqlDatabase.rar
 src/class/Log.rar
 tests.bat
+config/config.php
+src/index.php
