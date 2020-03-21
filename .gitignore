@@ -1,0 +1,8 @@
+vendor/
+logging/
+
+cmd.bat
+dump.bat
+src/class/MysqlDatabase.rar
+src/class/Log.rar
+tests.bat
