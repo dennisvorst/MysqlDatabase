@@ -7,7 +7,7 @@
     "psr-0": { "\\": "src/class/" }
   },
   "require-dev": {
-    "phpunit/phpunit": "^9"
+    "phpunit/phpunit": "9"
   },
   "scripts": {
     "test": "phpunit --colors=always --bootstrap ./vendor/autoload.php ./tests/Unit"
