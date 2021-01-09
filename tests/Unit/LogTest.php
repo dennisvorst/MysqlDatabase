@@ -5,7 +5,7 @@ use PHPUnit\Framework\TestCase;
 
 class LogTest extends TestCase
 {
-    private $_className = "MysqlDatabase";
+    private $_className = "Log";
 
     public function testClassExists()
     {
@@ -14,7 +14,31 @@ class LogTest extends TestCase
 
     public function testClassCanBeInstatiated()
     {
-        $this->assertInstanceOf("Log", new Log("somelog.log"));
+        $this->assertInstanceOf(Log::class, new Log("somelog.log"));
+    }
+
+    public function testMessageCanBeLogged()
+    {
+        $object = new Log("somelog.log");
+        $path = $object->getPath();
+
+        /** folder exists */
+        $this->assertTrue($object->writeLog("This is so cool"));
+    }
+
+    public function testLogFolderCanBeRemoved()
+    {
+        $object = new Log("somelog.log");
+        $path = $object->getPath();
+
+        /** folder exists */
+        $this->assertTrue(is_dir($path));
+
+        /** remove the folder */
+        $object->deleteLogFolder();
+
+        /** folder no longer exists */
+        $this->assertFalse(is_dir($path));
     }
 }
 ?>
