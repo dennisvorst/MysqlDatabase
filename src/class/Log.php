@@ -8,6 +8,10 @@ class Log
     /** filename is not allowed to contain a path */
     function __construct(string $filename)
     {
+        if (empty($filename)) 
+        {
+            throw new exception ("Empty filename for the logfile is not allowed.");
+        }
         if (!is_dir($this->_path))
         {
             mkdir($this->_path);

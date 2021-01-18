@@ -7,7 +7,7 @@ class MysqlConfig
 	private $_password;
 	private $_database;
 
-	function __construct(string $database, string $server = 'localhost', string $user = 'root', string $password = null)
+	function __construct(string $database = "test", string $server = 'localhost', string $user = 'root', string $password = null)
 	{
 		$this->setUser($user);
 		$this->setServer($server);
@@ -20,7 +20,7 @@ class MysqlConfig
 	}
 
 	/** Password */
-	function getPassword() : string
+	function getPassword()
 	{
 		return $this->_password;
 
@@ -50,7 +50,7 @@ class MysqlConfig
 	}
 
 	/** Database */
-	function getDatabase()
+	function getDatabase() : string
 	{
 		return $this->_database;
 	}

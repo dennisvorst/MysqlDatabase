@@ -3,10 +3,11 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 
-class DatabaseTest extends TestCase
+class MysqlDatabaseTest extends TestCase
 {
     private $_className = "MysqlDatabase";
     private $_database;
+    private $_config;
 
     // maybe better to use setup 
     function __construct()
@@ -17,6 +18,10 @@ class DatabaseTest extends TestCase
         // - Run the actual code contained within the method when called,
         // - Do not allow you to override the return value
         $this->_database = $this->getMockBuilder(MysqlDatabase::class)
+            ->setMethods(null)
+            ->getMock();
+
+        $this->_config = $this->getMockBuilder(MysqlConfig::class)
             ->setMethods(null)
             ->getMock();
     }
