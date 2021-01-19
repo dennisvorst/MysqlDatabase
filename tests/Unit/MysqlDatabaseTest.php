@@ -6,8 +6,9 @@ use PHPUnit\Framework\TestCase;
 class MysqlDatabaseTest extends TestCase
 {
     private $_className = "MysqlDatabase";
-    private $_database;
-    private $_config;
+//    private $_database;
+//    private $_config;
+    private $_mysqli;
     private $_log;
 
     // maybe better to use setup 
@@ -18,10 +19,13 @@ class MysqlDatabaseTest extends TestCase
         ->setMethods(null)
         ->getMock();
 
-    $this->_config = $this->getMockBuilder(MysqlConfig::class)
+        // $this->_config = $this->getMockBuilder(MysqlConfig::class)
+        // ->setMethods(null)
+        // ->getMock();
+
+        $this->_mysqli = $this->getMockBuilder(Mysqli::class)
         ->setMethods(null)
         ->getMock();
-
     }
 
     public function testClassExists()
@@ -31,7 +35,7 @@ class MysqlDatabaseTest extends TestCase
 
     public function testClassCanBeInstantiated()
     {
-        $object = new MysqlDatabase($this->_config, $this->_log);
+        $object = new MysqlDatabase($this->_mysqli, $this->_log);
         $this->assertInstanceOf(MysqlDatabase::class, $object);
     }
 }

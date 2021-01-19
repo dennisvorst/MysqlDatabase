@@ -19,29 +19,29 @@ class MysqlDatabase{
 	var $database;
 
 	// constructor
-	function __construct(MysqlConfig $config, Log $log){
-		$this->_config = $config;
+	function __construct(Mysqli $mysqli, Log $log){
+		$this->_mysqli = $mysqli;
 		$this->_log = $log;
 
-		/* get username and password */
-		if ($this->_config)
-		{
-			$dbName = $this->_config->getDatabase();
-			$userName = $this->_config->getUser();
-			$serverName = $this->_config->getServer();
-			$password = $this->_config->getPassword();
-		}
+		// /* get username and password */
+		// if ($this->_config)
+		// {
+		// 	$dbName = $this->_config->getDatabase();
+		// 	$userName = $this->_config->getUser();
+		// 	$serverName = $this->_config->getServer();
+		// 	$password = $this->_config->getPassword();
+		// }
 
 		/** enable error reporting for mysqli before attempting to make a connection */
-//		$driver = new mysqli_driver();
-//		$driver->report_mode = MYSQLI_REPORT_ALL;
-//		mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+		// $driver = new mysqli_driver();
+		// $driver->report_mode = MYSQLI_REPORT_ALL;
+		// mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 		/** connect to the database server */
-		$this->_mysqli = new Mysqli($serverName, $userName, $password);
+//		$this->_mysqli = new Mysqli($serverName, $userName, $password);
 
 		/** connect to the database */
-		$this->connect($dbName);
+//		$this->connect($dbName);
 	}
 
 	/** set the character set to be used in the database */

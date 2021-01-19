@@ -28,6 +28,7 @@ require_once "class/MysqlDatabase.php";
     /** init  */
     $database = "flurp";
     $table = "snarf";
+    $mysqli = new Mysqli('localhost', 'root', '', 'test');
 
     ?>
     <h1>MysqlDatabase workbench</h1>
@@ -41,20 +42,10 @@ require_once "class/MysqlDatabase.php";
           echo "Log object NOT created.";
         }
     ?>
-    <h2>Create Config object</h2>
-    <?php 
-        $config = new MysqlConfig();
-        if (!empty($config))
-        {
-          echo "Config object created.";
-        } else {
-          echo "Config object NOT created.";
-        }
-    ?>
 
     <h2>Create MysqlDatabase instance</h2>
     <?php 
-        $db = new MysqlDatabase($config, $log);
+        $db = new MysqlDatabase($mysqli, $log);
         if (!empty($db))
         {
           echo "Database object created.";
