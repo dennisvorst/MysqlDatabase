@@ -12,19 +12,11 @@ class MysqlDatabase{
 	var $_log;
 
 	var $_statement;
+	var $_rows;
+	var $_types;
+	var $_values;
 
 	var $database;
-
-	var $result;
-	var $upper;
-
-	var $ftwhere;
-	var $ftorderby;
-	var $ftfrom;
-	var $ftfieldlist;
-	var $nrstartrows;
-	var $nrendrows;
-
 
 	// constructor
 	function __construct(MysqlConfig $config, Log $log){
@@ -107,10 +99,72 @@ class MysqlDatabase{
 		}
 	}
 
+	/** these functions should be called one after another when inserting complex records */
+	function prepare(string $sql) : bool
+	{
+		/** init */
+		$this->_types = "";
+		$this->_values = [];
+		$this->_rows = [];
+
+		$this->_statement = $this->_mysqli->stmt_init();
+		if (!$this->_statement->prepare($sql))
+		{
+			return false;
+		}
+		return true;
+	}
+
+	function bind($type, $value)
+	{
+		$this->_types .= $type;
+		$this->_values[] = $value;
+	}
+
+	/** then call either the execute or the getrows */
+	function execute() : bool
+	{
+		/** init  */
+
+		if (!empty($this->_types))
+		{
+	//		print_r("Assessing types");
+			$this->_statement->bind_param($this->_types, ...$this->_values);
+		}
+		/* execute query */
+		if (!$this->_statement->execute()) {
+			return false;
+			//trigger_error('Error executing MySQL query: ' . $statement->error);
+		}
+
+		/** if the result is not a boolean then create the rows */
+		$result = $this->_statement->get_result();
+		if (!is_bool($result))
+		{
+			while ($row = $result->fetch_assoc()) {
+//				print_r($row);
+				$this->_rows[] = $row;
+			}
+		}
+
+		/* close statement */
+		if (!$this->_statement->close())
+		{
+			return false;
+//			trigger_error('Error closing the statement: ' . $statement->error);
+		}
+		return true;
+	}
+
+	function getrows(): array
+	{
+		return $this->_rows;
+	}
+
 	/** create a database */
 	function createDatabase(string $database) : bool 
 	{
-		if ($database == "") 
+		if (empty($database)) 
 		{
 			throw new exception ("Database name is mandatory");
 		}
@@ -128,7 +182,7 @@ class MysqlDatabase{
 
 	function dropDatabase(string $database) : bool 
 	{
-		if ($database == "") 
+		if (empty($database)) 
 		{
 			throw new exception ("Database name is mandatory");
 		}
@@ -146,7 +200,7 @@ class MysqlDatabase{
 
 	function databaseExists(string $database) : bool
 	{
-		if ($database == "") 
+		if (empty($database)) 
 		{
 			throw new exception ("Database name is mandatory");
 		}
@@ -163,11 +217,71 @@ class MysqlDatabase{
 					return true;
 				}
 			}
- 			else {
-				return false;
+			$result->close();
+		}
+		return false;
+	}
+
+	/** creates a tables */
+	function createTable(string $database, string $table, string $sql) : bool
+	{
+		if (empty($sql)) 
+		{
+			throw new exception("Sql is mandatory");
+		}
+
+//		print_r($sql);
+
+		if(!$this->tableExists($database, $table))
+		{
+			if($this->_mysqli->query($sql)){  
+				return true;
+			}
+		}
+		return false;
+	}
+
+	function dropTable(string $database, string $table) : bool
+	{
+		if (empty($database) || empty($table)) 
+		{
+			throw new exception("Database and tablenames are mandatory.");
+		}
+
+		if($this->tableExists($database, $table))
+		{
+			$sql="DROP TABLE {$database}.{$table}";
+			if ($result = $this->_mysqli->query($sql))
+			{
+				return $result;
+			}
+		}
+		return false;
+	}
+
+	private function tableExists(string $database, string $table) : bool
+	{
+		if (empty($database) || empty($table)) 
+		{
+			throw new exception("Database and tablenames are mandatory.");
+		}
+		$sql = "SELECT * FROM information_schema.tables	WHERE table_schema = '{$database}' AND table_name = '{$table}' LIMIT 1";
+//		print_r($sql);
+
+		if ($result = $this->_mysqli->query($sql))
+		{
+			if ($obj = $result->fetch_object())
+			{
+//				print_r($obj);
+				if ($table == $obj->TABLE_NAME && $database == $obj->TABLE_SCHEMA)
+				{
+//					print_r("true");
+					return true;
+				}
 			}
 			$result->close();
 		}
+//		print_r("false");
 		return false;
 	}
 }
