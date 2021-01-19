@@ -33,7 +33,9 @@ class MysqlDatabase{
 		}
 
 		/** enable error reporting for mysqli before attempting to make a connection */
-		mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+//		$driver = new mysqli_driver();
+//		$driver->report_mode = MYSQLI_REPORT_ALL;
+//		mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 		/** connect to the database server */
 		$this->_mysqli = new Mysqli($serverName, $userName, $password);

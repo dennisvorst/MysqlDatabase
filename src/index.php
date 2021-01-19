@@ -290,7 +290,7 @@ function getRecords(MysqlDatabase $db, string $database, string $table)
       echo "<tr><th>id</th><th>descr</th></tr>\n";
       foreach ($rows as $row)
       {
-        echo "<tr><th>{$row['id']}</th><th>{$row['descr']}</th></tr>\n";
+        echo "<tr><td>{$row['id']}</td><td>{$row['descr']}</td></tr>\n";
       }
       echo "</table>";
       
