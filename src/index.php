@@ -28,13 +28,13 @@ require_once "class/MysqlDatabase.php";
     /** init  */
     $database = "flurp";
     $table = "snarf";
-    $mysqli = new Mysqli('localhost', 'root', '', 'test');
+    $config = new MysqlConfig();
 
     ?>
     <h1>MysqlDatabase workbench</h1>
     <h2>Create Log object</h2>
     <?php
-        $log = new Log(time() . ".log");
+        $log = new Log("database.log");
         if (!empty($log))
         {
           echo "Log object created.";
@@ -45,7 +45,7 @@ require_once "class/MysqlDatabase.php";
 
     <h2>Create MysqlDatabase instance</h2>
     <?php 
-        $db = new MysqlDatabase($mysqli, $log);
+        $db = new MysqlDatabase($config, $database, $log);
         if (!empty($db))
         {
           echo "Database object created.";

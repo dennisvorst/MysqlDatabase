@@ -3,6 +3,8 @@
 ini_set('error_reporting', E_ALL);
 ini_set('display_errors', 'On');  //On or Off
 
+require_once "MysqlConfig.php";
+
 class MysqlDatabase{
 	var $_debug = true;
 
@@ -19,14 +21,16 @@ class MysqlDatabase{
 	var $database;
 
 	// constructor
-	function __construct(Mysqli $mysqli, Log $log){
-		$this->_mysqli = $mysqli;
+	function __construct(MysqlConfig $config, string $databaseName, Log $log){
+//		$config = new MysqlConfig();
+		$this->_mysqli = $config->getObject();
+//		$this->connect($databaseName);
 		$this->_log = $log;
 
 		// /* get username and password */
 		// if ($this->_config)
 		// {
-		// 	$dbName = $this->_config->getDatabase();
+		// 	$databaseName = $this->_config->getDatabase();
 		// 	$userName = $this->_config->getUser();
 		// 	$serverName = $this->_config->getServer();
 		// 	$password = $this->_config->getPassword();
@@ -41,7 +45,10 @@ class MysqlDatabase{
 //		$this->_mysqli = new Mysqli($serverName, $userName, $password);
 
 		/** connect to the database */
-//		$this->connect($dbName);
+		if (!$this->connect($databaseName))
+		{
+			$this->processError("Unable to connect to the database.Please contact your administrator.");
+		}
 	}
 
 	/** set the character set to be used in the database */
@@ -49,7 +56,7 @@ class MysqlDatabase{
 	{
 		if (empty($charSet)) 
 		{
-			throw new Exception("An error occured.");
+			$this->processError("An error occured.");
 		}
 		if ($this->mysqli->set_charset($charSet))
 		{
@@ -60,15 +67,63 @@ class MysqlDatabase{
 	}
 
 	/** connect to a database */
-	function connect(string $dbName)
+	function connect(string $databaseName) : bool
 	{
 		/* connect to the database */
-		$this->_connection = $this->_mysqli->select_db($dbName)
-		or die("Kan geen database selecteren\n");
+		if ($this->_connection = $this->_mysqli->select_db($databaseName)) 
+		{
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	/** sql injection save select method */
-	function select(string $sql, string $types, array $values)
+	function select(string $sql, string $types = "", array $values = []) : array
+	{
+		$rows = [];
+		if($this->_statement = $this->_mysqli->stmt_init())
+		{
+			$this->_log->write($sql);
+			if ($this->_statement->prepare($sql)) {
+
+				/** ... is the unpacking operator https://www.php.net/manual/en/migration56.new-features.php */
+				if (!empty($types))
+				{
+					$this->_statement->bind_param($types, ...$values);
+				}
+			
+				/* execute query */
+				if (!$this->_statement->execute()) {
+					$this->processError('Error executing MySQL query: ' . $statement->error);
+				}
+	
+				if ($result = $this->_statement->get_result())
+				{
+					/** put the result in (a) row(s) */
+					while ($row = $result->fetch_assoc()) {
+						$rows[] = $row;
+					}
+				}
+			
+				/* close statement */
+				if (!$this->_statement->close())
+				{
+					$this->processError('Error closing the statement: ' . $statement->error);
+				}
+				return $rows;
+			} else {
+				$this->processError('Error preparing the statement: ' . $this->_mysqli->error);
+			}
+		} else {
+			$this->processError('Error initializing the statement : ' . $statement->error);
+		}
+
+		return $rows;
+	}
+
+	/** inserting is the same as the select statement with the only exception that we return the generated id afterwards  */
+	function insert(string $sql, string $types, array $values) : int
 	{
 		$this->_statement = $this->_mysqli->stmt_init();
 		if ($this->_statement->prepare($sql)) {
@@ -84,22 +139,49 @@ class MysqlDatabase{
 				trigger_error('Error executing MySQL query: ' . $statement->error);
 			}
 
-			$result = $this->_statement->get_result();
+			$id = $this->_statement->insert_id;
 
-			/* fetch value */
-			$rows = [];
-			while ($row = $result->fetch_assoc()) {
-				$rows[] = $row;
-			}
-		
 			/* close statement */
 			if (!$this->_statement->close())
 			{
 				trigger_error('Error closing the statement: ' . $statement->error);
 			}
-			return $rows;
+
+			return $id;
 		}
 	}
+
+	/** inserting is the same as the select statement with the only exception that we return the generated id afterwards  */
+	function update(string $sql, string $types, array $values) : bool
+	{
+		$state = true;
+		$this->_statement = $this->_mysqli->stmt_init();
+		if ($this->_statement->prepare($sql)) {
+
+			/** ... is the unpacking operator https://www.php.net/manual/en/migration56.new-features.php */
+			if (!empty($types))
+			{
+				$this->_statement->bind_param($types, ...$values);
+			}
+		
+			/* execute query */
+			if (!$this->_statement->execute()) {
+				$state = false;
+				trigger_error('Error executing MySQL query: ' . $statement->error);
+
+			}
+
+			/* close statement */
+			if (!$this->_statement->close())
+			{
+				trigger_error('Error closing the statement: ' . $statement->error);
+			}
+
+			return $state;
+		}
+	}
+
+
 
 	/** these functions should be called one after another when inserting complex records */
 	function prepare(string $sql) : bool
@@ -285,6 +367,22 @@ class MysqlDatabase{
 		}
 //		print_r("false");
 		return false;
+	}
+
+	function getConnection()
+	{
+	 	return $this->_mysqli;
+	}
+
+	function getId() : mixed
+	{
+		$this->_mysqli->insert_id;
+	}
+
+	private function processError(string $msg)
+	{
+		$this->_log->write($msg);
+		throw new exception($msg);
 	}
 }
 ?>

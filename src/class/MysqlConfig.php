@@ -2,6 +2,7 @@
 
 class MysqlConfig
 {
+	private $_mysqli;
 	private $_server;
 	private $_user;
 	private $_password;
@@ -17,6 +18,14 @@ class MysqlConfig
 		{
 			$this->setPassword($password);
 		}
+
+		$this->_mysqli = new Mysqli($server, $user, $password);
+
+	}
+
+	function getObject() : mysqli
+	{
+		return $this->_mysqli;
 	}
 
 	/** Password */

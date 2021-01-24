@@ -23,6 +23,11 @@ class MysqlDatabaseTest extends TestCase
         // ->setMethods(null)
         // ->getMock();
 
+        /**
+         * stmt_init
+         * query
+         */
+
         $this->_mysqli = $this->getMockBuilder(Mysqli::class)
         ->setMethods(null)
         ->getMock();
