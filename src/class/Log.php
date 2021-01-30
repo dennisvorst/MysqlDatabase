@@ -13,12 +13,8 @@ class Log
         {
             throw new exception ("Empty filename for the logfile is not allowed.");
         }
-
-        $this->setPath($path);
-
-        $this->setfilename($filename);
-        
-        $this->setLog($this->_path, $this->_filename); 
+      
+        $this->setLog($path, $filename); 
     }
 
     function setLog(string $path, string $filename) : void 
