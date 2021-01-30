@@ -2,35 +2,51 @@
 class Log
 {
     /** path is only a subfolder in the project */
-    private $_path = "logging/";
-    private $_log;
+    private $_path; /** single folder */
+    private $_log; /** full path and filename */
+    private $_filename; /** single filename */
 
     /** filename is not allowed to contain a path */
-    function __construct(string $filename)
+    function __construct(string $filename, string $path = "logging/")
     {
         if (empty($filename)) 
         {
             throw new exception ("Empty filename for the logfile is not allowed.");
         }
 
-        if (!is_dir($this->_path))
-        {
-            mkdir($this->_path);
-        }
-        $date = new DateTime();
-        $filename = date_format($date, 'Ymd') . "_" .  $filename;
+        $this->setPath($path);
+
+        $this->setfilename($filename);
         
-        $this->setLog($filename); 
+        $this->setLog($this->_path, $this->_filename); 
     }
 
-    function setLog(string $filename) : void 
+    function setLog(string $path, string $filename) : void 
     {
-        $this->_log = $this->_path . $filename;
+        $this->setPath($path);
+        $this->setFilename($filename);
+        $this->_log = $this->getPath() . $this->getFilename();
         if (!file_exists($this->_log))
         {
             $this->write("Log Started");
         } 
     }
+
+    function getLog()
+    {
+        return $this->_log;
+    }
+
+    function setFilename(string $filename) : void
+    {
+        $date = new DateTime();
+        $this->_filename =  date_format($date, 'Ymd') . "_" .  $filename;
+    }
+    function getFilename() : string
+    {
+        return $this->_filename;
+    }
+
 
     function write(string $line) : bool
     {
@@ -42,9 +58,13 @@ class Log
     {
         return $this->_path;
     }
-    function setPath(string $path)
+    function setPath(string $path) : void
     {
         $this->_path = $path;
+        if (!empty($this->_path) && !is_dir($this->_path))
+        {
+            mkdir($this->_path);
+        }
     }
 
     function getFullFilename()

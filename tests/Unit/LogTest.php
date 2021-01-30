@@ -40,5 +40,57 @@ class LogTest extends TestCase
         /** folder no longer exists */
         $this->assertFalse(is_dir($path));
     }
+
+    public function testPathCanBeSetAndGet()
+    {
+        $object = new Log("somelog.log");
+        $expected = "c:\some_path";
+        $object->setPath($expected);
+        $actual = $object->getPath();
+
+        $this->assertEquals($actual, $expected);
+    }
+
+    public function testFilenameCanBeSetAndGet()
+    {
+        $filename = "filename.log";
+        $date = new DateTime();
+        $expected = date_format($date, 'Ymd') . "_" .  $filename;
+
+        $object = new Log("somelog.log");
+        $object->setFilename($filename);
+        $actual = $object->getFilename();
+
+        $this->assertEquals($actual, $expected);
+    }    
+
+    /** change the filename with a blank path */
+    public function testLogCanBeSetAndGet()
+    {
+        $filename = "someother.log";
+        $date = new DateTime();
+        $expected = date_format($date, 'Ymd') . "_" .  $filename;
+
+        $object = new Log("somelog.log");
+        $object->setLog("", "someother.log");
+        $actual = $object->getLog();
+
+        $this->assertEquals($actual, $expected);
+    }    
+
+    public function testLogCanBeSetAndGet_2()
+    {
+        $filename = "someother.log";
+        $path = "someotherpath/";
+        $date = new DateTime();
+        $expected = $path . date_format($date, 'Ymd') . "_" .  $filename;
+
+        $object = new Log("somelog.log");
+        $object->setLog("someotherpath/", $filename);
+        $actual = $object->getLog();
+
+        $this->assertEquals($actual, $expected);
+    }    
+
 }
 ?>
