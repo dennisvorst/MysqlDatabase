@@ -6,43 +6,22 @@ ini_set('display_errors', 'On');  //On or Off
 require_once "MysqlConfig.php";
 
 class MysqlDatabase{
-	var $_debug = true;
+	protected $_debug = true;
 
-	var $_mysqli;
-	var $_connection;
-	var $_config;
-	var $_log;
+	protected $_mysqli;
+	protected $_connection;
+	protected $_config;
+	protected $_log;
 
-	var $_statement;
-	var $_rows;
-	var $_types;
-	var $_values;
-
-	var $database;
+	protected $_statement;
+	protected $_rows;
+	protected $_types;
+	protected $_values;
 
 	// constructor
 	function __construct(MysqlConfig $config, string $databaseName, Log $log){
-//		$config = new MysqlConfig();
 		$this->_mysqli = $config->getObject();
-//		$this->connect($databaseName);
 		$this->_log = $log;
-
-		// /* get username and password */
-		// if ($this->_config)
-		// {
-		// 	$databaseName = $this->_config->getDatabase();
-		// 	$userName = $this->_config->getUser();
-		// 	$serverName = $this->_config->getServer();
-		// 	$password = $this->_config->getPassword();
-		// }
-
-		/** enable error reporting for mysqli before attempting to make a connection */
-		// $driver = new mysqli_driver();
-		// $driver->report_mode = MYSQLI_REPORT_ALL;
-		// mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-
-		/** connect to the database server */
-//		$this->_mysqli = new Mysqli($serverName, $userName, $password);
 
 		/** connect to the database */
 		if (!$this->connect($databaseName))

@@ -19,6 +19,7 @@ class Log
         }
         $date = new DateTime();
         $filename = date_format($date, 'Ymd') . "_" .  $filename;
+        
         $this->setLog($filename); 
     }
 
