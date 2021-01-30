@@ -19,11 +19,14 @@ class MysqlConfig
 			$this->setPassword($password);
 		}
 
-		$this->_mysqli = new Mysqli($server, $user, $password);
-
+		//$this->_mysqli = new Mysqli($server, $user, $password);
 	}
 
-	function getObject() : mysqli
+	function setConnection(Mysqli $mysqli) : void
+	{
+		$this->_mysqli = $mysqli;
+	}
+	function getConnection() : Mysqli
 	{
 		return $this->_mysqli;
 	}

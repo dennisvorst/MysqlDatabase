@@ -6,8 +6,6 @@ use PHPUnit\Framework\TestCase;
 class MysqlDatabaseTest extends TestCase
 {
     private $_className = "MysqlDatabase";
-//    private $_database;
-//    private $_config;
     private $_mysqli;
     private $_log;
 
@@ -15,22 +13,13 @@ class MysqlDatabaseTest extends TestCase
     function setup() : void
     {
         $this->_log = $this->getMockBuilder(Log::class)
-        ->disableOriginalConstructor()
-        ->setMethods(null)
-        ->getMock();
+            ->disableOriginalConstructor()
+            ->setMethods(["write"])
+            ->getMock();
 
-        // $this->_config = $this->getMockBuilder(MysqlConfig::class)
-        // ->setMethods(null)
-        // ->getMock();
-
-        /**
-         * stmt_init
-         * query
-         */
-
-        $this->_mysqli = $this->getMockBuilder(Mysqli::class)
-        ->setMethods(null)
-        ->getMock();
+        // $this->_mysqli = $this->createMock(Mysqli::class)
+        //     ->setMethods(["select_db"])
+        //     ->getMock();
     }
 
     public function testClassExists()
@@ -40,7 +29,16 @@ class MysqlDatabaseTest extends TestCase
 
     public function testClassCanBeInstantiated()
     {
-        $object = new MysqlDatabase($this->_mysqli, $this->_log);
+        $log = new $this->_log("flurp.log");
+
+        // Create a stub for the SomeClass class.
+        $mysqli = $this->createStub(Mysqli::class);
+        // Configure the stub.
+        $mysqli->method('select_db')
+            ->willReturn('flurp');
+
+
+        $object = new MysqlDatabase($mysqli, $log);
         $this->assertInstanceOf(MysqlDatabase::class, $object);
     }
 }

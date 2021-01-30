@@ -23,7 +23,7 @@ class LogTest extends TestCase
         $path = $object->getPath();
 
         /** folder exists */
-        $this->assertTrue($object->writeLog("This is so cool"));
+        $this->assertTrue($object->write("This is so cool"));
     }
 
     public function testLogFolderCanBeRemoved()

@@ -6,6 +6,13 @@ use PHPUnit\Framework\TestCase;
 class MysqlConfigTest extends TestCase
 {
     private $_className = "MysqlConfig";
+    private $_mysqli;
+
+    protected function setUp() : void
+    {
+        /** mock the database and the log file  */
+        $this->_mysqli = $this->createMock(Mysqli::class);
+    }
 
 
     public function testClassExists()
@@ -58,6 +65,17 @@ class MysqlConfigTest extends TestCase
         $this->assertEquals($object->getPassword(), "anyPassword");
         $this->assertEquals($object->getServer(), "anyServer");
     }
+
+    public function testClassCanReceiveMysqliObject()
+    {
+        $object = $this->_className;
+        $object = new $object("someDatabase", "www.github.com", "octocat", "noneyourbizz");
+        $object->setConnection($this->_mysqli);
+        $mysqli = $object->getConnection();
+        $this->assertInstanceOf(Mysqli::class, $mysqli);
+
+    }
+
 
 }
 ?>

@@ -4,6 +4,7 @@ ini_set('error_reporting', E_ALL);
 ini_set('display_errors', 'On');  //On or Off
 
 require_once "MysqlConfig.php";
+require_once "Log.php";
 
 class MysqlDatabase{
 	protected $_debug = true;
@@ -19,15 +20,9 @@ class MysqlDatabase{
 	protected $_values;
 
 	// constructor
-	function __construct(MysqlConfig $config, string $databaseName, Log $log){
-		$this->_mysqli = $config->getObject();
+	function __construct(Mysqli $mysqli, Log $log){
+		$this->_mysqli = $mysqli;
 		$this->_log = $log;
-
-		/** connect to the database */
-		if (!$this->connect($databaseName))
-		{
-			$this->processError("Unable to connect to the database.Please contact your administrator.");
-		}
 	}
 
 	/** set the character set to be used in the database */
