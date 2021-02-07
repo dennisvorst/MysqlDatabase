@@ -311,6 +311,11 @@ class MysqlDatabase{
 		return false;
 	}
 
+	function realEscapeString(string $value) : string
+	{
+		return $this->_mysqli->real_escape_string($value);
+	}
+
 	private function tableExists(string $database, string $table) : bool
 	{
 		if (empty($database) || empty($table)) 
