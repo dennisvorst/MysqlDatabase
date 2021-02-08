@@ -110,7 +110,7 @@ class MysqlDatabase{
 		
 			/* execute query */
 			if (!$this->_statement->execute()) {
-				trigger_error('Error executing MySQL query: ' . $statement->error);
+				trigger_error('Error executing MySQL query: ' . $this->_statement->error);
 			}
 
 			$id = $this->_statement->insert_id;
@@ -118,7 +118,7 @@ class MysqlDatabase{
 			/* close statement */
 			if (!$this->_statement->close())
 			{
-				trigger_error('Error closing the statement: ' . $statement->error);
+				trigger_error('Error closing the statement: ' . $this->_statement->error);
 			}
 
 			return $id;
