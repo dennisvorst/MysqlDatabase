@@ -1,9 +1,13 @@
 <?php
-require_once "class/Log.php";
-require_once "class/MysqlConfig.php";
-require_once "class/MysqlDatabase.php";
-?>
+ini_set('error_reporting', E_ALL);
+ini_set('display_errors', 'On');  //On or Off
 
+require __DIR__.'/vendor/autoload.php'; 
+use App\Models\Log;
+use App\Models\MysqlConfig;
+use App\Models\MysqlDatabase;
+
+?>
 <!doctype html>
 <html lang="en">
   <head>
@@ -26,9 +30,22 @@ require_once "class/MysqlDatabase.php";
 
     <?php 
     /** init  */
-    $database = "flurp";
-    $table = "snarf";
-    $config = new MysqlConfig();
+    $database = "foo";
+    $table = "bar";
+//    $config = new MysqlConfig();
+
+      switch ($_SERVER['SERVER_NAME'])
+      {
+        case "localhost":
+          /* localhost */
+          $mysqli = new Mysqli("localhost", "root", "", "test");
+          break;
+    	  default:
+      		print_r($_SERVER['SERVER_NAME']);
+          $mysqli = new Mysqli("localhost", "root", "", "test");
+          break;
+      }
+
 
     ?>
     <h1>MysqlDatabase workbench</h1>
@@ -45,7 +62,8 @@ require_once "class/MysqlDatabase.php";
 
     <h2>Create MysqlDatabase instance</h2>
     <?php 
-        $db = new MysqlDatabase($config, $database, $log);
+//        $db = new MysqlDatabase($config, $database, $log);
+        $db = new MysqlDatabase($mysqli, $log);
         if (!empty($db))
         {
           echo "Database object created.";

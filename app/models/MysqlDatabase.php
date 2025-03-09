@@ -1,10 +1,11 @@
 <?php
+namespace App\Models;
+
+use \Mysqli;
+
 /* for testing purposes */
 ini_set('error_reporting', E_ALL);
 ini_set('display_errors', 'On');  //On or Off
-
-require_once "MysqlConfig.php";
-require_once "Log.php";
 
 class MysqlDatabase{
 	protected $_debug = true;

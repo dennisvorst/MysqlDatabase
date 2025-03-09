@@ -1,4 +1,8 @@
 <?php
+namespace App\Models;
+
+use \DateTime;
+
 class Log
 {
     /** path is only a subfolder in the project */
@@ -35,8 +39,10 @@ class Log
 
     function setFilename(string $filename) : void
     {
+        /** the \ in front of datetime is to circumvent the namespace */
         $date = new DateTime();
         $this->_filename =  date_format($date, 'Ymd') . "_" .  $filename;
+
     }
     function getFilename() : string
     {
